@@ -1,18 +1,17 @@
 // import React from "react";
 
+
 const NavBar = () => {
     return (
         <>
-        <p>navbar</p>
-        <div>
-            <p>expenses</p>
-            <p>tabs</p>
-            <p>request expense</p>
-            <p>friends</p>
-            <p>me</p>
-        </div>
+            <div className="min-w-screen min-h-18 bg-[#FFFFFF] shadow-[0_-4px_12px_rgba(0,0,0,0.15)] flex flex-row justify-around items-center rounded-t-lg">
+                <p>expenses</p>
+                <p>tabs</p>
+                <p>request expense</p>
+                <p>friends</p>
+                <p>me</p>
+            </div>
         </>
-        
     )
 }
 

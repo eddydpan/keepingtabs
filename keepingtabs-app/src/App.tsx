@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import NavBar from './components/navbar';
+import NavBar from './components/NavBar';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,7 +29,9 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <NavBar></NavBar>
+      <div className='absolute bottom-0 left-0'>
+        <NavBar />
+      </div>
     </>
   )
 }
