@@ -1,5 +1,17 @@
 # React + TypeScript + Vite
 
+
+Important documentation for development:
+
+**If the schema of our tables ever change**, we can update the types in our `src/types/database.types.ts` with: 
+```
+npm run gen-types
+```
+
+
+
+
+---
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
