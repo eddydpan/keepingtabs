@@ -1,5 +1,5 @@
 import './App.css';
-// import NavBar from './components/NavBar';
+import NavBar from './components/NavBar';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ExpensePage from './features/expenses/ExpensePage';
 import TabsPage from './features/tabs/TabsPage';
@@ -10,8 +10,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from "@supabase/supabase-js"; 
 import type { Database } from "./types/database.types";
 
-import './App.css'
-import NavBar from './components/NavBar';
+import { Outlet } from "react-router-dom";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
@@ -35,41 +34,45 @@ function App() {
     }
   };
 
-  
+  // Layout component that includes the NavBar and an Outlet for rendering child routes
+  const NavAppLayout = () => {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <ul>
+          {users.map((user) => (
+            <li key={user.user_id}>{user.user_id}</li>
+          ))}
+        </ul>
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <NavBar />
+      </div>
+    );
+  };
+
+  // Define app routes
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <ExpensePage />
+      element: <NavAppLayout />,   // layout WITH nav
+      children: [
+        { index: true, element: <ExpensePage /> },   // "/"
+        { path: "tabs", element: <TabsPage /> },
+        { path: "friends", element: <FriendsPage /> },
+        { path: "me", element: <MePage /> },
+      ],
     },
+
+    // route WITHOUT nav
     {
-      path: "/tabs",
-      element: <TabsPage />
+      path: "request-expense",
+      element: <RequestExpensePage />,
     },
-    {
-      path: "/request-expense",
-      element: <RequestExpensePage />
-    },
-    {
-      path: "/friends",
-      element: <FriendsPage />
-    },
-    {
-      path: "/me",
-      element: <MePage />
-    }
-  ])
+  ]);
 
   return (
     <>
-      <ul>
-        {users.map((user) => (
-          <li key={user.user_id}>{user.user_id}</li>
-        ))}
-      </ul>
       <RouterProvider router = {router} />
-      {/* <div className='absolute bottom-0 left-0'>
-        <NavBar />
-      </div> */}
     </>
   )
 }
