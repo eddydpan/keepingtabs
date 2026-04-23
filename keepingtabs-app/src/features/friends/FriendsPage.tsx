@@ -32,21 +32,24 @@ const FriendsPage = () => {
   }, [user]) // This effect re-runs if `user` ever changes
 
   return (
-    <>
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Users to Add</h1>
-      <ul>
-        {users.map((u) => (
-          <li key={u.user_id} className="mb-2">
-            {/* Show email or name depending on your database schema */}
-            {u.user_id} 
-          </li>
-        ))}
-      </ul>
-    </div>
+    <div>
+
     
-    <div className='absolute bottom-0 left-0 w-full'>
-        <NavBar />
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Users to Add</h1>
+        <ul>
+          {users.map((u) => (
+            <li key={u.user_id} className="mb-2">
+              {/* Show email or name depending on your database schema */}
+              {u.user_id} 
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className='absolute bottom-0 left-0 w-full'>
+          <NavBar />
+      </div>
     </div>
   )
 }
