@@ -12,7 +12,7 @@ import type { Database } from "./types/database.types";
 
 import { Outlet } from "react-router-dom";
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY);
 
 type User = Database["public"]["Tables"]["users"]["Row"];
 
@@ -37,12 +37,12 @@ function App() {
   // Layout component that includes the NavBar and an Outlet for rendering child routes
   const NavAppLayout = () => {
     return (
-      <div className="flex flex-col min-h-screen">
-        <ul>
+      <div className="flex flex-col min-h-screen border-2 border-black-500">
+        {/* <ul>
           {users.map((user) => (
             <li key={user.user_id}>{user.user_id}</li>
           ))}
-        </ul>
+        </ul> */}
         <main className="flex-1">
           <Outlet />
         </main>
