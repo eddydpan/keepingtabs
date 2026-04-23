@@ -1,24 +1,52 @@
 // import React from 'react'
-import FriendCard from "./FriendCard"
+import { useEffect, useState } from 'react'
+import NavBar from "../../components/NavBar"
+import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
+import type { Database } from "../../types/database.types"
 
-const FriendsHeader = () => {
-  return (
-    <div className="flex flex-row justify-between items-center mb-4">
-      <h1 className="font-bold">Your Friends</h1>
-      <div>
-        <button className="h-8 w-8 bg-gray-300 rounded-full mr-2 hover:bg-sky-700">!</button>
-        <button className="h-8 w-8 bg-gray-300 rounded-full mr-2">+</button>
-      </div>
-    </div>
-  )
-}
+type UserRow = Database["public"]["Tables"]["users"]["Row"]
 
 const FriendsPage = () => {
+  const { user } = useAuth()
+  const [users, setUsers] = useState<UserRow[]>([])
+
+  useEffect(() => {
+    // Only fetch if we have a valid authenticated user
+    if (!user) return
+
+    const fetchOtherUsers = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .neq('user_id', user.id) // Filter out the current user
+
+      if (error) {
+        console.error("Error fetching users:", error)
+      } else {
+        setUsers(data || [])
+      }
+    }
+
+    fetchOtherUsers()
+  }, [user]) // This effect re-runs if `user` ever changes
+
   return (
-    <div className="m-8">
-      <FriendsHeader />
-      <FriendCard username="jondough" name="Jon Doe"/>
-      <FriendCard username="deer.eyes" name="Jane Deer"/>
+    <>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Users to Add</h1>
+      <ul>
+        {users.map((u) => (
+          <li key={u.user_id} className="mb-2">
+            {/* Show email or name depending on your database schema */}
+            {u.user_id} 
+          </li>
+        ))}
+      </ul>
+    </div>
+    
+    <div className='absolute bottom-0 left-0 w-full'>
+        <NavBar />
     </div>
   )
 }

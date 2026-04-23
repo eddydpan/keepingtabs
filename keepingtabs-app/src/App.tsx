@@ -1,38 +1,45 @@
 import './App.css';
 import NavBar from './components/NavBar';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
 import ExpensePage from './features/expenses/ExpensePage';
 import TabsPage from './features/tabs/TabsPage';
 import RequestExpensePage from './features/request-expense/RequestExpensePage';
 import FriendsPage from './features/friends/FriendsPage';
 import MePage from './features/me/MePage';
-import { useEffect, useState } from 'react'
-import { createClient } from "@supabase/supabase-js"; 
-import type { Database } from "./types/database.types";
+import LoginPage from './features/auth/LoginPage';
+
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute><ExpensePage /></ProtectedRoute>
+  },
+  {
+    path: "/tabs",
+    element: <ProtectedRoute><TabsPage /></ProtectedRoute>
+  },
+  {
+    path: "/request-expense",
+    element: <ProtectedRoute><RequestExpensePage /></ProtectedRoute>
+  },
+  {
+    path: "/friends",
+    element: <ProtectedRoute><FriendsPage /></ProtectedRoute>
+  },
+  {
+    path: "/me",
+    element: <ProtectedRoute><MePage /></ProtectedRoute>
+  }
+])
+
 
 import { Outlet } from "react-router-dom";
-
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY);
-
-type User = Database["public"]["Tables"]["users"]["Row"];
-
-function App() {
-  const [users, setUsers] = useState<User[]>([]);
-    useEffect(() => {
-      getUsers();
-    }, []);
-
-  const getUsers = async () => {
-    // TODO: This query fetches all users — scope this to relevant users once auth is set up
-    const { data, error } = await supabase.from("users").select("*");
-    console.log("data:", data);
-    console.log("error:", error);
-    if (error) {
-      console.error("Error fetching users:", error);
-    } else {
-      setUsers(data);
-    }
-  };
 
   // Layout component that includes the NavBar and an Outlet for rendering child routes
   const NavAppLayout = () => {
@@ -56,24 +63,29 @@ function App() {
     {
       element: <NavAppLayout />,   // layout WITH nav
       children: [
-        { index: true, element: <ExpensePage /> },   // "/"
-        { path: "tabs", element: <TabsPage /> },
-        { path: "friends", element: <FriendsPage /> },
-        { path: "me", element: <MePage /> },
+        { index: true, element: <ProtectedRoute><ExpensePage /></ProtectedRoute> },   // "/"
+        { path: "tabs", element: <ProtectedRoute><TabsPage /></ProtectedRoute> },
+        { path: "friends", element: <ProtectedRoute><FriendsPage /></ProtectedRoute> },
+        { path: "me", element: <ProtectedRoute><MePage /></ProtectedRoute> },
       ],
     },
 
     // route WITHOUT nav
     {
+    path: "/login", // default route for unauthenticated users
+    element: <LoginPage />
+    },
+    {
       path: "request-expense",
-      element: <RequestExpensePage />,
+      element: <ProtectedRoute><RequestExpensePage /></ProtectedRoute>,
     },
   ]);
 
+function App() {
   return (
-    <>
-      <RouterProvider router = {router} />
-    </>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   )
 }
 
