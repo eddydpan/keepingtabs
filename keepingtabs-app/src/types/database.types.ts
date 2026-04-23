@@ -45,6 +45,7 @@ export type Database = {
           created_at: string
           currency: string | null
           expense_id: string
+          transaction_id: string
           host_user_id: string
           member_user_id: string
           note: string | null
