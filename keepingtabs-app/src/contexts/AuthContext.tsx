@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-
+import { createDevUser, isDevAuthBypassEnabled } from '../lib/DevBypass'
 /*
 Without this context, we would have desync between Supabase state and what's 
-rendered on the screen. For example, if a user logs out, React will not know
+rendered on the screen. For example, if a usser logs out, React will not know
 to re-render the app with the logged-out state. This context asynchronously 
 listens for auth changes and updates the app state.
 */
@@ -29,8 +29,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-
+  
   useEffect(() => {
+    // Use Dev Bypass
+    if (isDevAuthBypassEnabled) {
+      setSession(null)
+      setUser(createDevUser())
+      setIsLoading(false)
+      return
+    }
+
     // 1. Get current session on initial load
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -61,3 +69,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAuth = () => {
   return useContext(AuthContext)
 }
+
+
