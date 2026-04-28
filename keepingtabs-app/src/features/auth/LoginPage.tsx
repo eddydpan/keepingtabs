@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const navigate = useNavigate()
+  const { user, isLoading } = useAuth()
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate('/', { replace: true })
+    }
+  }, [isLoading, user, navigate])
 
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -15,8 +25,8 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        // Redirection URL back to your app
-        emailRedirectTo: window.location.origin,
+        // Redirect back to the public login route first, then forward after session is ready.
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     })
 
